@@ -1,4 +1,4 @@
-from StringIO import StringIO
+from io import StringIO
 from docx.shared import Cm
 from docxtpl import DocxTemplate, InlineImage
 
