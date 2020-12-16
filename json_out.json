@@ -1,1 +1,1 @@
-{"sector":"A","technology":"LTE","freq":2500.0,"manufacturer":"Ericsson","model":"AIR6449","azimuth":10.0,"agl":"96","power":280.0,"gain":22.65,"erp":51286}
+{"Related Antenna Location":"SF14136A_TMO_A_1","sector":"A","port":"P01","technology":"LTE","freq":2500,"manufacturer":"Ericsson","model":"AIR6449","azimuth":10,"agl":"96","power":100,"gain":22.6,"erp":18197}
