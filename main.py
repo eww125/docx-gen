@@ -10,7 +10,7 @@ from flask import escape
 from flask import Flask, render_template, Response
 from base64_encoder import *
 from bs4 import BeautifulSoup
-import io
+import io, os
 
 def quickbase_auth():
     url = 'https://soteriarf.quickbase.com/db/main?a=API_authenticate&username=evan@thecbrgroup.com&password=AnUEh7so&hours=24'
