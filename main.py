@@ -9,6 +9,16 @@ import requests, base64
 from flask import escape
 from flask import Flask, render_template, Response
 from base64_encoder import *
+from bs4 import BeautifulSoup
+import io
+
+def quickbase_auth():
+    url = 'https://soteriarf.quickbase.com/db/main?a=API_authenticate&username=evan@thecbrgroup.com&password=AnUEh7so&hours=24'
+    r = requests.get(url)
+    soup = BeautifulSoup(r.content,'xml')
+    for url in soup.find_all('ticket'):
+            auth_ticket = url.text
+    return auth_ticket
 
 def W2dBm(W):
     return 10*log10(W*1000)
@@ -121,6 +131,6 @@ def antenna_inventory(request):
     tmp_files = os.listdir('/tmp')
     
 
-    upload_file_to_quickbase('bqq5m3crs', 249, out_file)
+    upload_file_to_quickbase('bqq5m3crs', record_id, 249, out_file)
 
     return ('AntennaInventory.docx created. Reload Quick Base to access the file.')
