@@ -44,4 +44,47 @@ def antenna_inventory(request):
     df = qb_dataframe('bqzaae4x9')
     df = df[df['Antenna Location - SITE_ID'] == site_id]
     
-    return 'test123'
+    df = df.rename(columns={
+        'Related Antenna Location': 'antenna_id',
+        'Antenna Location - SECTOR': 'sector',
+        'Port': 'port',
+        'Technology': 'technology',
+        'Frequency MHz': 'freq',
+        'Pattern Code - Manufacturer': 'manufacturer',
+        'Antenna Location - ANTENNA_MODEL': 'model',
+        'Antenna Location - AZIMUTH': 'azimuth',
+        'Antenna Location - RAD_CENTER_FT': 'agl',
+        'Input Power (W)': 'power',
+        'Pattern Code - Gain (dBd)': 'gain'
+    })
+
+    df = df[['antenna_id', 'sector', 'port', 'technology', 'freq', 'manufacturer', 'model', 'azimuth', 'agl', 'power', 'gain']]
+
+    df['erp_dbm'] = ''
+    df['erp'] = ''
+    for x in range(len(df)):
+        df['erp_dbm'].iloc[x] = round(W2dBm(df['power'].iloc[x]*1000) + df['gain'].iloc[x], 1)
+        df['erp'].iloc[x] = int(dBm2W(df['erp_dbm'].iloc[x]) / 1000)
+    df = df.drop('erp_dbm', 1)
+    df['freq'] = df['freq'].astype(int)
+    df['azimuth'] = df['azimuth'].astype(int)
+    df['power'] = df['power'].astype(int)
+    df = df.round({'gain': 1})
+    df.sort_values(['antenna_id', 'port', 'freq'], ascending=[True, True, True], inplace=True)
+
+    row_contents = []
+    for x in range(len(df)):
+        row_contents.append(eval(df.iloc[x].to_json()))
+
+    context = {
+        'site_id': site_id,
+        'address': address,
+        'row_contents': row_contents
+    }
+
+    doc = DocxTemplate('AntennaInventoryTpl.docx')
+    doc.render(context)
+    doc.save('/tmp/AntennaInventory.docx')
+
+    tmp_files = os.listdir('/tmp')
+    return ('tmp_files:', tmp_files)
