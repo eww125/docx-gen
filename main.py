@@ -123,4 +123,4 @@ def antenna_inventory(request):
 
     upload_file_to_quickbase('bqq5m3crs', 249, out_file)
 
-    return ('tmp_files:', tmp_files)
+    return ('AntennaInventory.docx created. Reload Quick Base to access the file.')
