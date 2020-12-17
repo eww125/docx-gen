@@ -10,6 +10,32 @@ def W2dBm(W):
 def dBm2W(dBm):
     return 10**((dBm)/10) / 1000
 
+def upload_file_to_quickbase(table_id, record_id, fid, out_file):
+    # Create XML payload
+    root = ET.Element("qdbapi")
+    udata = ET.SubElement(root, 'udata')
+    udata.text = 'mydata'
+    ticket = ET.SubElement(root, 'ticket')
+    ticket.text = quickbase_auth()
+    apptoken = ET.SubElement(root, 'apptoken')
+    apptoken.text = 'dz2abv5chpk6bs35syzkcydqjfb'
+    ET.SubElement(root, "field", fid=str(fid), filename=out_file).text = encode_file(out_file)
+    rid = ET.SubElement(root, 'rid')
+    rid.text = str(record_id)
+    tree = ET.ElementTree(root)
+    out = io.BytesIO()
+    tree.write(out)
+    xml_str = out.getvalue().decode()
+    # API_UploadFile
+    url = "https://soteriarf.quickbase.com/db/" + table_id
+    payload = xml_str
+    headers = {
+      'Content-Type': 'application/xml',
+      'QUICKBASE-ACTION': 'API_UploadFile'
+    }
+    response = requests.request("POST", url, headers=headers, data = payload)
+    print(response.text.encode('utf8'))
+
 def qb_dataframe(table_id):
     url = "https://api.quickbase.com/v1/fields?tableId=" + table_id
     payload = {}
@@ -82,9 +108,14 @@ def antenna_inventory(request):
         'row_contents': row_contents
     }
 
+    out_file = '/tmp/AntennaInventory.docx'
     doc = DocxTemplate('AntennaInventoryTpl.docx')
     doc.render(context)
-    doc.save('/tmp/AntennaInventory.docx')
+    doc.save(out_file)
 
     tmp_files = os.listdir('/tmp')
+    
+
+    upload_file_to_quickbase('bqq5m3crs', 249, out_file)
+
     return ('tmp_files:', tmp_files)
