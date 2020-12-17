@@ -1,9 +1,14 @@
+from xml.etree.ElementTree import Element, SubElement, Comment, tostring
+import xml.etree.cElementTree as ET
 from io import StringIO
 from docx.shared import Cm
 from docxtpl import DocxTemplate, InlineImage
 import pandas as pd
 from math import log10
-import requests
+import requests, base64
+from flask import escape
+from flask import Flask, render_template, Response
+from base64_encoder import *
 
 def W2dBm(W):
     return 10*log10(W*1000)
