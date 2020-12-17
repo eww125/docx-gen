@@ -1,3 +1,5 @@
+Flask==1.0.2
+requests==2.23.0
 docxtpl==0.5.15
 python-docx==0.8.8
 pandas==1.0.5
